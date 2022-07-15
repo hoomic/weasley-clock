@@ -17,9 +17,9 @@ class Servo(gpiozero.Servo):
     angle = max(self.lo, min(self.hi, angle))
     new_value = angle / (np.pi/2) - 1.0
     increase = new_value > self.value
-    for v in np.arange(self.value, new_value, np.pi/32 * (1 if increase else -1)):
+    for v in np.arange(self.value, new_value, 1./256 * (1 if increase else -1)):
       self.value = v
-      sleep(delay)
+      time.sleep(delay)
     self.value = new_value
     self.angle = angle
 
