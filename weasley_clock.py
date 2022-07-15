@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import requests 
+from time import sleep
 
 import RPi.GPIO as GPIO
 
@@ -9,13 +10,13 @@ import dropbox
 from servo import Servo
 
 #GPIO pins used for the long hand and the short hand
-LONG_HAND_PIN = 11
-SHORT_HAND_PIN = 12
+LONG_HAND_PIN = 17
+SHORT_HAND_PIN = 18
 
 DB_PATH = '/weasley_clock'
 DB_FILE = 'location.txt'
 
-print("Connecting to Dropbox...")
+print("Connecting to Dropbox with token:{}".format(os.environ['DBX_ACCESS_TOKEN']))
 dbx = dropbox.Dropbox(os.environ['DBX_ACCESS_TOKEN'])
 
 # list of locations in clockwise order with where first element corresponds to a 0 angle
@@ -42,8 +43,10 @@ class WeasleyClock():
         dbx.files_delete(DB_PATH + '/' + DB_FILE)
 
       self.update()
+      sleep(1)
 
   def process_command(self, command):
+    print("Processing Command: {}".format(command))
     (person, loc) = command.split(',')
     index = locations.index(loc.lower())
     angle = np.pi * index / len(locations)
