@@ -15,7 +15,12 @@ class Servo(gpiozero.Servo):
 
   def set_angle(self, angle, delay=0.1):
     angle = max(self.lo, min(self.hi, angle))
-    self.value = angle / (np.pi/2) - 1.0
+    new_value = angle / (np.pi/2) - 1.0
+    increase = new_value > self.value
+    for v in np.arange(self.value, new_value, np.pi/32 * (1 if increase else -1)):
+      self.value = v
+      sleep(delay)
+    self.value = new_value
     self.angle = angle
 
   def increment_angle(self, increment, delay=0.1):
