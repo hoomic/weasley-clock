@@ -45,7 +45,7 @@ class WeasleyClock():
     print("Processing Command: {},{}".format(person, loc))
     index = locations.index(loc.lower())
     angle = np.pi * index / len(locations)
-    self.hands[person].set_angle(angle)
+    self.hands[person].set_angle_threaded(angle)
 
   def update(self):
     pass
