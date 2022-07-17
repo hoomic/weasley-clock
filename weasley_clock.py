@@ -5,7 +5,7 @@ from time import sleep
 
 import RPi.GPIO as GPIO
 
-import dropbox
+from email_reader import EmailReader
 
 from servo import Servo
 
@@ -13,11 +13,7 @@ from servo import Servo
 LONG_HAND_PIN = 17
 SHORT_HAND_PIN = 18
 
-DB_PATH = '/weasley_clock'
-DB_FILE = 'location.txt'
-
-print("Connecting to Dropbox with token:{}".format(os.environ['DBX_ACCESS_TOKEN']))
-dbx = dropbox.Dropbox(os.environ['DBX_ACCESS_TOKEN'])
+email_reader = EmailReader()
 
 # list of locations in clockwise order with where first element corresponds to a 0 angle
 locations = ['home', 'work', 'school', 'lost', 'tavern', 'parents', 'mortal peril', 'gym', 'travel', 'bed']
@@ -25,36 +21,35 @@ locations = ['home', 'work', 'school', 'lost', 'tavern', 'parents', 'mortal peri
 class WeasleyClock():
   def __init__(self):
     self.hands = dict()
-    self.hands['Zach'] = Servo(SHORT_HAND_PIN)
-    self.hands['Penny'] = Servo(LONG_HAND_PIN)
+    self.hands['zach'] = Servo(SHORT_HAND_PIN)
+    self.hands['penny'] = Servo(LONG_HAND_PIN)
     self.run()
 
   def run(self):
     while True:
       # Check to see if a location change has been triggered
-      search_result = dbx.files_search(DB_PATH, DB_FILE, max_results=1)
-      if len(search_result.matches):
-        # if a location change was triggered, download the data and look at the last location
-        _, result = dbx.files_download(path=DB_PATH + '/' + DB_FILE)
-        command = result.text.split()[-1]
-        # process this location
-        self.process_command(command)
-        # delete the file once it has been processed
-        dbx.files_delete(DB_PATH + '/' + DB_FILE)
-
+      for msg in email_reader.read_email():
+        try:
+          print("Processing email with subject: {}".format(msg['subject']))
+          person, loc = msg['subject'].split(',')
+          person = person.lower()
+          loc = loc.lower()
+          if person in self.hands and loc in locations:
+            self.process_command(person, loc)
+        except Exception as e:
+          print(e)
+          continue
       self.update()
       sleep(1)
 
-  def process_command(self, command):
-    print("Processing Command: {}".format(command))
-    (person, loc) = command.split(',')
+  def process_command(self, person, loc):
+    print("Processing Command: {},{}".format(person, loc))
     index = locations.index(loc.lower())
     angle = np.pi * index / len(locations)
     self.hands[person].set_angle(angle)
 
   def update(self):
     pass
-
 
 if __name__ == '__main__':
   weasley_clock = WeasleyClock()
