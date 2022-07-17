@@ -1,4 +1,3 @@
-import os
 import numpy as np
 import requests 
 from time import sleep
@@ -40,7 +39,7 @@ class WeasleyClock():
           print(e)
           continue
       self.update()
-      sleep(1)
+      sleep(10)
 
   def process_command(self, person, loc):
     print("Processing Command: {},{}".format(person, loc))
