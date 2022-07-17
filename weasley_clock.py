@@ -44,8 +44,8 @@ class WeasleyClock():
   def process_command(self, person, loc):
     print("Processing Command: {},{}".format(person, loc))
     index = locations.index(loc.lower())
-    angle = np.pi * index / len(locations)
-    self.hands[person].set_angle_threaded(angle)
+    value= 2 * index / len(locations) - 1
+    self.hands[person].set_value_threaded(value)
 
   def update(self):
     pass
