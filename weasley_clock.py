@@ -1,6 +1,7 @@
 import numpy as np
 import requests 
 from time import sleep
+import logging
 
 import RPi.GPIO as GPIO
 
@@ -29,7 +30,7 @@ class WeasleyClock():
       # Check to see if a location change has been triggered
       for msg in email_reader.read_email():
         try:
-          print("Processing email with subject: {}".format(msg['subject']))
+          logging.info("Processing email with subject: {}".format(msg['subject']))
           person, loc = msg['subject'].split(',')
           person = person.lower()
           loc = loc.lower()
@@ -42,7 +43,7 @@ class WeasleyClock():
       sleep(10)
 
   def process_command(self, person, loc):
-    print("Processing Command: {},{}".format(person, loc))
+    logging.info("Processing Command: {},{}".format(person, loc))
     index = locations.index(loc.lower())
     value= 2 * index / len(locations) - 1
     self.hands[person].set_value_threaded(value)
@@ -51,5 +52,6 @@ class WeasleyClock():
     pass
 
 if __name__ == '__main__':
+  logging.basicConfig(filename="weasley_clock.log", encoding='utf-8', level=logging.DEBUG)
   weasley_clock = WeasleyClock()
   

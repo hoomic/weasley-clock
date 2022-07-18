@@ -2,6 +2,7 @@ import os
 import imaplib
 import email
 from time import sleep
+import logging
 
 EMAIL = "weasleyclock.zs@gmail.com"
 PASSWORD = os.environ['GMAIL_APP_PASSWORD']
@@ -19,10 +20,10 @@ class EmailReader():
         status, _ = self.mail.login(EMAIL, PASSWORD)
         self.logged_in = status == "OK"
         assert self.logged_in, "login failed"
-        print("Successfully logged into email!")
+        logging.info("Successfully logged into email!")
       except Exception as e:
         self.logged_in = False
-        print("Exception occurred trying to login: {}".format(e))
+        logging.warning("Exception occurred trying to login: {}".format(e))
         sleep(10)
 
   def logout(self):
@@ -50,6 +51,6 @@ class EmailReader():
         # delete the message
         self.mail.store(str(i+1), "+FLAGS", "\\Deleted")
     except Exception as e:
-      print(e)
+      logging.warning("Exception occurred reading email: {}".format(e))
       self.logout()
       return []
