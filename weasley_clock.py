@@ -5,15 +5,11 @@ import logging
 
 import RPi.GPIO as GPIO
 
-from email_reader import EmailReader
-
 from servo import Servo
 
 #GPIO pins used for the long hand and the short hand
 LONG_HAND_PIN = 17
 SHORT_HAND_PIN = 18
-
-email_reader = EmailReader()
 
 # list of locations in clockwise order with where first element corresponds to a 0 angle
 locations = ['home', 'work', 'school', 'lost', 'tavern', 'parents', 'mortal peril', 'gym', 'travel', 'bed']
@@ -24,6 +20,9 @@ logger.setLevel(logging.DEBUG)
 fh = logging.FileHandler("weasley_clock.log")
 fh.setLevel(logging.DEBUG)
 logger.addHandler(fh)
+
+from email_reader import EmailReader
+email_reader = EmailReader()
 
 class WeasleyClock():
   def __init__(self):
