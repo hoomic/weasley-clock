@@ -16,8 +16,9 @@ class EmailReader():
     while not self.logged_in:
       try:
         self.mail = imaplib.IMAP4_SSL(SERVER)
-        self.mail.login(EMAIL, PASSWORD)
-        self.logged_in = True
+        status, _ = self.mail.login(EMAIL, PASSWORD)
+        self.logged_in = status == "OK"
+        assert self.logged_in, "login failed"
         print("Successfully logged into email!")
       except Exception as e:
         self.logged_in = False
