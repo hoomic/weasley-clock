@@ -8,6 +8,8 @@ EMAIL = "weasleyclock.zs@gmail.com"
 PASSWORD = os.environ['GMAIL_APP_PASSWORD']
 SERVER = "imap.gmail.com"
 
+logger = logging.getLogger("weasley_clock.email_reader")
+
 class EmailReader():
   def __init__(self):
     self.logged_in = False
@@ -20,10 +22,10 @@ class EmailReader():
         status, _ = self.mail.login(EMAIL, PASSWORD)
         self.logged_in = status == "OK"
         assert self.logged_in, "login failed"
-        logging.info("Successfully logged into email!")
+        logger.info("Successfully logged into email!")
       except Exception as e:
         self.logged_in = False
-        logging.warning("Exception occurred trying to login: {}".format(e))
+        logger.warning("Exception occurred trying to login: {}".format(e))
         sleep(10)
 
   def logout(self):
@@ -51,6 +53,6 @@ class EmailReader():
         # delete the message
         self.mail.store(str(i+1), "+FLAGS", "\\Deleted")
     except Exception as e:
-      logging.warning("Exception occurred reading email: {}".format(e))
+      logger.warning("Exception occurred reading email: {}".format(e))
       self.logout()
       return []
