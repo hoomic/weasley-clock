@@ -8,9 +8,15 @@ SERVER = "imap.gmail.com"
 
 class EmailReader():
   def __init__(self):
+    self.login()
+
+  def login(self):
     self.mail = imaplib.IMAP4_SSL(SERVER)
     self.mail.login(EMAIL, PASSWORD)
     print("Successfully logged into email!")
+
+  def logout(self):
+    self.mail.logout()
 
   def read_email(self):
     try:
@@ -32,4 +38,6 @@ class EmailReader():
         self.mail.store(str(i+1), "+FLAGS", "\\Deleted")
     except Exception as e:
       print(e)
+      self.logout()
+      self.login()
       return []
