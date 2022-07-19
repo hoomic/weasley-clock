@@ -21,6 +21,7 @@ fh = logging.FileHandler("weasley_clock.log")
 fh.setLevel(logging.DEBUG)
 logger.addHandler(fh)
 
+#This import has to come after the logger is set up
 from email_reader import EmailReader
 email_reader = EmailReader()
 
