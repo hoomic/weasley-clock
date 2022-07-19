@@ -1,5 +1,6 @@
 import os
 import requests
+from time import sleep
 
 class Network():
   def __init__(self, ssid, psk, key_mgmt="WPA-PSK"):
