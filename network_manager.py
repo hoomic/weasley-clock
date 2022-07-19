@@ -87,3 +87,6 @@ class NetworkManager():
           outfile.close()
           os.system("sudo reboot")
       sleep(60)
+
+if __name__ == '__main__':
+  nm = NetworkManager()
