@@ -27,7 +27,6 @@ class Network():
       except:
         continue
     if ssid is None or psk is None or key_mgmt is None:
-      breakpoint()
       return
     return cls(ssid, psk, key_mgmt)
 
@@ -35,7 +34,7 @@ class Network():
     return self.ssid == other.ssid and self.psk == other.psk and self.key_mgmt == other.key_mgmt
 
   def __str__(self):
-    return 'network={{\n\tssid=\"{}\"\n\tpsk=\"{}\"\n\tkey_mgmt={}\n}}'.format(self.ssid, self.psk, self.key_mgmt)
+    return 'network={{\n\tssid=\"{}\"\n\tpsk=\"{}\"\n\tkey_mgmt={}\n}}\n'.format(self.ssid, self.psk, self.key_mgmt)
 
   def __hash__(self):
     return hash(self.ssid)
@@ -44,7 +43,7 @@ def find_wifi_credentials():
   for root, dirs, files in os.walk('/media/', topdown=False):
     for file in files:
       if file == "wifi_network.txt":
-        network_creds = open(root + file).read().split()
+        network_creds = open(root + '/' + file).read().split()
         return Network(*network_creds)
 
 def connected():
@@ -59,6 +58,7 @@ class NetworkManager():
     self.networks = set()
     self.wpa_supplicant_file = wpa_supplicant_file
     self.read_wifi_credentials()
+    self.connect_if_not_connected()
 
   def read_wifi_credentials(self):
     infile = open(self.wpa_supplicant_file)
