@@ -1,5 +1,6 @@
 import os
 import imaplib
+import smtplib
 import email
 from time import sleep
 import logging
@@ -8,7 +9,25 @@ EMAIL = "weasleyclock.zs@gmail.com"
 PASSWORD = os.environ['GMAIL_APP_PASSWORD']
 SERVER = "imap.gmail.com"
 
-logger = logging.getLogger("weasley_clock.email_reader")
+logger = logging.getLogger("weasley_clock.email_manager")
+
+def send_email(receiver_address, subject):
+  try:
+    message = MIMEMultipart()
+    message['From'] = EMAIL
+    message['To'] = receiver_address
+    message['Subject'] = subject
+
+    session = smtplib.SMTP('smtp.gmail.com')
+    session.starttls()
+    session.login(EMAIL, PASSWORD)
+
+    text = message.as_string()
+    session.sendmail(EMAIL, receiver_address, text)
+    session.quit()
+    logger.info("Sent email to {} with subject {}".format(receiver_address, subject))
+  except Exception as e:
+    logger.warning("Exception occurred trying to send email: {}".format(e))
 
 class EmailReader():
   def __init__(self):

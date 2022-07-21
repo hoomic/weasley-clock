@@ -14,7 +14,7 @@ LONG_HAND_PIN = 17
 SHORT_HAND_PIN = 18
 
 # list of locations in clockwise order with where first element corresponds to a 0 angle
-locations = ['home', 'work', 'school', 'lost', 'tavern', 'parents', 'mortal peril', 'gym', 'travel', 'bed']
+locations = ['home', 'work', 'school', 'walk', 'lost', 'tavern', 'parents', 'mortal peril', 'gym', 'travel', 'bed']
 
 logger = logging.getLogger('weasley_clock')
 logger.setLevel(logging.DEBUG)
@@ -24,7 +24,7 @@ fh.setLevel(logging.DEBUG)
 logger.addHandler(fh)
 
 #This import has to come after the logger is set up
-from email_reader import EmailReader
+from email_manager import EmailReader, send_email
 email_reader = EmailReader()
 
 # Find the trusted email file
@@ -43,6 +43,7 @@ def add_trusted_email(email):
   trusted_emails.append(email)
   with open(trusted_email_file, 'a') as outfile:
     outfile.write('\n{}'.format(email))
+  send_email(email, "Congratulations! You can now send commands to WeasleyClock!")
 
 # use this to add emails to weasley_clock_trusted_emails.txt
 trusted_email_password = os.environ['TRUSTED_EMAIL_PASSWORD']
