@@ -2,6 +2,7 @@ import os
 import imaplib
 import smtplib
 import email
+from email.mime.multipart import MIMEMultipart
 from time import sleep
 import logging
 
@@ -13,7 +14,7 @@ logger = logging.getLogger("weasley_clock.email_manager")
 
 def send_email(receiver_address, subject):
   try:
-    message = email.mime.multipart.MIMEMultipart()
+    message = MIMEMultipart()
     message['From'] = EMAIL
     message['To'] = receiver_address
     message['Subject'] = subject
