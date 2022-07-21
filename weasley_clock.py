@@ -95,7 +95,7 @@ class WeasleyClock():
       for msg in email_reader.read_email():
         try:
           sender = msg['from']
-          sender = sender[sender.find('<'):-1]
+          sender = sender[sender.find('<')+1:-1]
           logger.info("Processing email with subject: {} from: {}".format(msg['subject'], sender))
           if sender not in trusted_emails or trusted_email_file is None:
             # if the subject of the message is the password, then add this email to the trusted email list
