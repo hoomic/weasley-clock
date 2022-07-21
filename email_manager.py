@@ -13,7 +13,7 @@ logger = logging.getLogger("weasley_clock.email_manager")
 
 def send_email(receiver_address, subject):
   try:
-    message = MIMEMultipart()
+    message = email.mime.multipart.MIMEMultipart()
     message['From'] = EMAIL
     message['To'] = receiver_address
     message['Subject'] = subject

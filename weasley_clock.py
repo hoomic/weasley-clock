@@ -104,6 +104,8 @@ class WeasleyClock():
               logger.info("Received email from unkown address with correct password... Adding to list")
               add_trusted_email(sender)
             continue
+
+          
           subject_fields = msg['subject'].split(',')
           exited = False
           if len(subject_fields) == 2:
