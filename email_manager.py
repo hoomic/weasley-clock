@@ -19,7 +19,7 @@ def send_email(receiver_address, subject):
     message['To'] = receiver_address
     message['Subject'] = subject
 
-    session = smtplib.SMTP('smtp.gmail.com')
+    session = smtplib.SMTP('smtp.gmail.com', 587)
     session.starttls()
     session.login(EMAIL, PASSWORD)
 
