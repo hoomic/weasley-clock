@@ -29,7 +29,7 @@ email_reader = EmailReader()
 
 # Find the trusted email file
 trusted_email_file = None
-for root, dirs, files in os.walk('~'):
+for root, dirs, files in os.walk(os.path.expanduser('~')):
   for f in files:
     if f == 'weasley_clock_trusted_emails.txt':
       trusted_email_file = root + '/' + f
@@ -97,7 +97,7 @@ class WeasleyClock():
           sender = msg['from']
           sender = sender[sender.find('<'):-1]
           logger.info("Processing email with subject: {} from: {}".format(msg['subject'], sender))
-          if sender not in trusted_emails:
+          if sender not in trusted_emails or trusted_email_file is None:
             # if the subject of the message is the password, then add this email to the trusted email list
             if msg['subject'] == trusted_email_password:
               logger.info("Received email from unkown address with correct password... Adding to list")
