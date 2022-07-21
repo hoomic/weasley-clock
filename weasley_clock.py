@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import requests 
 from time import sleep
@@ -26,6 +27,26 @@ logger.addHandler(fh)
 from email_reader import EmailReader
 email_reader = EmailReader()
 
+# Find the trusted email file
+trusted_email_file = None
+for root, dirs, files in os.walk('~'):
+  for f in files:
+    if f == 'weasley_clock_trusted_emails.txt':
+      trusted_email_file = root + '/' + f
+      trusted_emails = open(trusted_email_file).read().split()
+if trusted_email_file is None:
+  logger.warning("Could not find weasley_clock_trusted_emails.txt, so allowing commands from ALL emails")
+else:
+  logger.info("Found trusted email file with entries:\n{}".format('\n'.join(trusted_emails)))
+
+def add_trusted_email(email):
+  trusted_emails.append(email)
+  with open(trusted_email_file, 'a') as outfile:
+    outfile.write('\n{}'.format(email))
+
+# use this to add emails to weasley_clock_trusted_emails.txt
+trusted_email_password = os.environ['TRUSTED_EMAIL_PASSWORD']
+
 class Location():
   def __init__(self, loc, timestamp):
     self.loc = loc
@@ -43,6 +64,8 @@ class WeasleyClock():
       a mapping from a person to their corresponding servo
   last_loc : dict(str, Location)
       a mapping from a person to their last location
+  trusted_emails : list(str)
+      a list of emails that the clock will receive commands from
 
   Methods
   -------
@@ -71,7 +94,15 @@ class WeasleyClock():
       # Check to see if a location change has been triggered
       for msg in email_reader.read_email():
         try:
-          logger.info("Processing email with subject: {}".format(msg['subject']))
+          sender = msg['from']
+          sender = sender[sender.find('<'):-1]
+          logger.info("Processing email with subject: {} from: {}".format(msg['subject'], sender))
+          if sender not in trusted_emails:
+            # if the subject of the message is the password, then add this email to the trusted email list
+            if msg['subject'] == trusted_email_password:
+              logger.info("Received email from unkown address with correct password... Adding to list")
+              add_trusted_email(email)
+            continue
           subject_fields = msg['subject'].split(',')
           exited = False
           if len(subject_fields) == 2:
