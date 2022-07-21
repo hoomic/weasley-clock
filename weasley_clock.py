@@ -102,7 +102,7 @@ class WeasleyClock():
             # if the subject of the message is the password, then add this email to the trusted email list
             if msg['subject'] == trusted_email_password:
               logger.info("Received email from unkown address with correct password... Adding to list")
-              add_trusted_email(email)
+              add_trusted_email(sender)
             continue
           subject_fields = msg['subject'].split(',')
           exited = False
