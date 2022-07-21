@@ -1,6 +1,7 @@
 import numpy as np
 import requests 
 from time import sleep
+from datetime import datetime, timedelta
 import logging
 
 import RPi.GPIO as GPIO
@@ -38,9 +39,18 @@ class WeasleyClock():
       for msg in email_reader.read_email():
         try:
           logger.info("Processing email with subject: {}".format(msg['subject']))
-          person, loc = msg['subject'].split(',')
-          person = person.lower()
-          loc = loc.lower()
+          subject_fields = msg['subject'].split(',')
+          exited = False
+          if len(subject_fields) == 2:
+            person, loc = subject_fields
+          elif len(subject_fields) == 3:
+            person, loc, exited = msg['subject'].split(',')
+            exited = exited.lower().strip() == 'exited'
+          person = person.lower().strip()
+          loc = loc.lower().strip()
+          # if an area is exited, then that person is traveling 
+          if exited:
+            loc = 'travel'
           if person in self.hands and loc in locations:
             self.process_command(person, loc)
         except Exception as e:
