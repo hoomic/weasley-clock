@@ -112,6 +112,7 @@ class WeasleyClock():
     now = datetime.now()
     for person, loc in self.last_loc.items():
       if loc.loc == 'travel' and (now - loc.timestamp) > timedelta(hours=4):
+        logger.info("{} has been traveling for more than 4 hours... they are lost".format(person))
         self.process_command(person, 'lost')
 
 if __name__ == '__main__':
